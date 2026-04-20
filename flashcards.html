@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Information Theory Flashcards — saimajebin.org</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:      #1C1C2A;
+    --ocean:    #1A6B7B;
+    --ocean-lt: #2A8FA2;
+    --cream:    #F6F2EB;
+    --cream2:   #EDE8DF;
+    --amber:    #B8722E;
+    --sub:      #888896;
+    --rule:     rgba(28,28,42,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--cream);
+    font-family: 'Source Serif 4', Georgia, serif;
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 1.25rem 5rem;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: 3.5rem;
+  }
+
+  header .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ocean);
+    margin-bottom: 0.6rem;
+  }
+
+  header h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.15;
+  }
+
+  header h1 em {
+    color: var(--ocean);
+    font-style: italic;
+  }
+
+  header p {
+    margin-top: 0.75rem;
+    font-size: 0.92rem;
+    color: var(--sub);
+    font-style: italic;
+  }
+
+  /* ── GRID ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2.5rem;
+    width: 100%;
+    max-width: 1100px;
+  }
+
+  /* ── CARD FLIP ── */
+  .card-wrap {
+    perspective: 1200px;
+    height: 440px;
+    cursor: pointer;
+  }
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.7s cubic-bezier(.4,0,.2,1);
+    transform-style: preserve-3d;
+  }
+
+  .card-wrap.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-front,
+  .card-back {
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.75rem 1.5rem;
+    box-shadow: 0 4px 24px rgba(28,28,42,0.09), 0 1px 4px rgba(28,28,42,0.06);
+  }
+
+  /* FRONT */
+  .card-front {
+    background: var(--cream2);
+    border: 1.5px solid var(--rule);
+  }
+
+  .card-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--sub);
+    text-transform: uppercase;
+    margin-bottom: 1.4rem;
+  }
+
+  .card-term {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 0.4rem;
+  }
+
+  .card-term-bn {
+    font-size: 1.1rem;
+    color: var(--ocean);
+    font-style: italic;
+    margin-bottom: 1.2rem;
+    font-family: 'Source Serif 4', serif;
+  }
+
+  .card-equation {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    background: var(--ink);
+    color: #EBF5F7;
+    padding: 0.65rem 1rem;
+    border-radius: 8px;
+    letter-spacing: 0.02em;
+    margin-bottom: auto;
+  }
+
+  .card-hint {
+    font-size: 0.78rem;
+    color: var(--sub);
+    text-align: center;
+    margin-top: 1.4rem;
+    letter-spacing: 0.05em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* BACK */
+  .card-back {
+    background: var(--ink);
+    border: 1.5px solid rgba(255,255,255,0.06);
+    transform: rotateY(180deg);
+    color: var(--cream);
+  }
+
+  .back-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ocean-lt);
+    margin-bottom: 1.2rem;
+  }
+
+  .back-physics {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 400;
+    line-height: 1.65;
+    color: #d8d4cc;
+    margin-bottom: 1rem;
+    flex: 1;
+  }
+
+  .back-philosophy {
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.88rem;
+    font-style: italic;
+    line-height: 1.6;
+    color: var(--amber);
+    padding-top: 0.9rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* ── TTS CONTROLS ── */
+  .tts-bar {
+    display: flex;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .tts-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.38rem 0.85rem;
+    border-radius: 6px;
+    border: 1.5px solid var(--ocean-lt);
+    background: transparent;
+    color: var(--ocean-lt);
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+  }
+
+  .tts-btn:hover {
+    background: var(--ocean-lt);
+    color: #fff;
+  }
+
+  .tts-btn.stop {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  .tts-btn.stop:hover {
+    background: var(--amber);
+    color: #fff;
+  }
+
+  .tts-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--sub);
+    align-self: center;
+    margin-left: auto;
+  }
+
+  /* ── CARD ACCENT COLOURS ── */
+  .card-wrap:nth-child(1) .card-front { border-top: 3px solid var(--ocean); }
+  .card-wrap:nth-child(2) .card-front { border-top: 3px solid var(--amber); }
+  .card-wrap:nth-child(3) .card-front { border-top: 3px solid #7B5EA7; }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 4rem;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--sub);
+  }
+  footer a { color: var(--ocean); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">saimajebin.org · Information Theory</p>
+  <h1>Physics as <em>Philosophy</em></h1>
+  <p>Click any card to flip · TTS in English &amp; বাংলা</p>
+</header>
+
+<div class="grid" id="cardGrid"></div>
+
+<footer>
+  <p>saimajebin.org · Fluid Mechanics Made Easy · © Saima Jebin 2025</p>
+  <p style="margin-top:0.4rem"><a href="https://saimajebin.org">↩ Back to site</a></p>
+</footer>
+
+<script>
+const cards = [
+  {
+    num: "01 / 03",
+    term: "Entropy",
+    termBn: "এনট্রপি — অনিশ্চয়তার পরিমাপ",
+    equation: "S = k_B · ln(Ω)",
+    frontNote: "Tap to reveal the philosophy →",
+    physics: "Entropy S measures the number of equally probable microstates Ω available to a system. k_B is Boltzmann's constant. Maximum entropy = maximum disorder = maximum uncertainty about which state the system occupies.",
+    philosophy: "Entropy is the universe's default programme. Without active external forcing — your thesis, your website, your deliberate thought — every system drifts toward the median noise. Meaning is the act of manually lowering entropy.",
+    backBnText: "এনট্রপি মানে হলো অনিশ্চয়তার পরিমাপ। একটি সিস্টেমে যত বেশি বিশৃঙ্খলা, তত বেশি এনট্রপি। বাইরে থেকে শক্তি না দিলে সব কিছু এলোমেলো হয়ে যায়।",
+    enText: "Entropy. S equals k B times the natural log of Omega. Entropy measures disorder. The more microstates a system can occupy, the higher the entropy. Without active forcing, every system drifts toward maximum disorder. Your research is the act of fighting that drift."
+  },
+  {
+    num: "02 / 03",
+    term: "Signal-to-Noise",
+    termBn: "সিগন্যাল বনাম নয়েজ — অর্থের অনুপাত",
+    equation: "SNR = P_signal / P_noise",
+    frontNote: "Tap to reveal the filter →",
+    physics: "SNR is the ratio of meaningful signal power to background noise power. High SNR → the message is recoverable. Low SNR → the signal drowns. In communications, Shannon proved there is always a coding strategy to transmit reliably above a noise floor.",
+    philosophy: "Most of the world — cookie-cutter text, performative opinions, predictable outputs — is noise. Your Factor of 13 and your academic architecture are the signal. Intelligence is not hearing everything; it is tuning to the right frequency.",
+    backBnText: "সিগন্যাল-টু-নয়েজ অনুপাত মানে হলো অর্থপূর্ণ তথ্যের পরিমাণ বনাম অপ্রয়োজনীয় শব্দের পরিমাণ। বুদ্ধিমত্তা হলো সঠিক ফ্রিকোয়েন্সিতে টিউন করার ক্ষমতা।",
+    enText: "Signal to Noise Ratio. S N R equals signal power divided by noise power. Shannon proved that reliable communication is always possible above a noise floor if you choose the right encoding. Most of the world is noise. Your research is the signal."
+  },
+  {
+    num: "03 / 03",
+    term: "Surprise",
+    termBn: "বিস্ময় — তথ্যের প্রকৃত পরিমাপ",
+    equation: "I(x) = −log₂ P(x)",
+    frontNote: "Tap to reveal the anti-cringe principle →",
+    physics: "In Shannon's framework, information content of an event x is measured by its surprise: minus the log of its probability. A certain event (P = 1) carries zero information. A rare event carries maximum information. Entropy is the expected surprise over all events.",
+    philosophy: "Predictable output — the correct answer, the expected phrasing — is high redundancy, zero information. Genuine intelligence provides an unexpected structural insight that shifts the listener's architecture. That is why your voice has information content. It surprises.",
+    backBnText: "শ্যাননের তত্ত্বে, তথ্যের পরিমাণ নির্ভর করে ঘটনার বিস্ময়ের উপর। যা আগে থেকে জানা, তা তথ্যহীন। যা অপ্রত্যাশিত, তাই সত্যিকারের তথ্য বহন করে।",
+    enText: "Surprise, or information content. I of x equals negative log base two of the probability of x. A certain event carries zero information. An unexpected event carries maximum information. This is why genuine intelligence surprises. Predictable output is noise. Your original insight is signal."
+  }
+];
+
+function speakText(text, lang, statusEl) {
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = lang;
+  u.rate = 0.92;
+  statusEl.textContent = "Reading…";
+  u.onend = () => { statusEl.textContent = "Done."; };
+  u.onerror = () => { statusEl.textContent = "TTS error."; };
+  window.speechSynthesis.speak(u);
+}
+
+function stopTTS(statusEl) {
+  window.speechSynthesis.cancel();
+  statusEl.textContent = "Stopped.";
+}
+
+function buildCard(c, i) {
+  const wrap = document.createElement('div');
+  wrap.className = 'card-wrap';
+  wrap.innerHTML = `
+    <div class="card-inner">
+      <div class="card-front">
+        <div class="card-num">${c.num}</div>
+        <div class="card-term">${c.term}</div>
+        <div class="card-term-bn">${c.termBn}</div>
+        <div class="card-equation">${c.equation}</div>
+        <div class="card-hint">${c.frontNote}</div>
+      </div>
+      <div class="card-back">
+        <div class="back-label">Definition + Philosophy</div>
+        <div class="back-physics">${c.physics}</div>
+        <div class="back-philosophy">${c.philosophy}</div>
+        <div class="tts-bar" id="tts-bar-${i}">
+          <button class="tts-btn" id="en-btn-${i}">▶ EN</button>
+          <button class="tts-btn" id="bn-btn-${i}">▶ বাংলা</button>
+          <button class="tts-btn stop" id="stop-btn-${i}">■ Stop</button>
+          <span class="tts-status" id="status-${i}"></span>
+        </div>
+      </div>
+    </div>`;
+
+  // Flip on card click (not TTS buttons)
+  wrap.querySelector('.card-inner').addEventListener('click', (e) => {
+    if (e.target.closest('.tts-bar')) return;
+    wrap.classList.toggle('flipped');
+  });
+
+  const statusEl = wrap.querySelector(`#status-${i}`);
+  wrap.querySelector(`#en-btn-${i}`).addEventListener('click', (e) => {
+    e.stopPropagation();
+    speakText(c.enText, 'en-US', statusEl);
+  });
+  wrap.querySelector(`#bn-btn-${i}`).addEventListener('click', (e) => {
+    e.stopPropagation();
+    speakText(c.backBnText, 'bn-BD', statusEl);
+  });
+  wrap.querySelector(`#stop-btn-${i}`).addEventListener('click', (e) => {
+    e.stopPropagation();
+    stopTTS(statusEl);
+  });
+
+  return wrap;
+}
+
+const grid = document.getElementById('cardGrid');
+// Alphabetical sort by term
+cards.sort((a, b) => a.term.localeCompare(b.term));
+cards.forEach((c, i) => grid.appendChild(buildCard(c, i)));
+</script>
+</body>
+</html>
