@@ -479,13 +479,24 @@
 
   <div class="callout">
     <strong>Where there is a gradient, there is a Laplacian.</strong> 
-    The Laplacian is not an independent actor; it is the logical consequence of flux dynamics. 
-    If a quantity flows down its own gradient—expressed by Fourier’s or Fick’s Law .
+  The Laplacian is not an independent operator; it emerges naturally from flux dynamics.
+ Whenever a quantity flows down its own gradient—captured by Fourier’s or Fick’s law,
+  <strong>e.g.</strong> $\mathbf{J} = -k \nabla \phi$—the time rate of change must equal the negative
+  divergence of that flux. This combination of the <strong>driver</strong> (the gradient) and the
+  <strong>accountant</strong> (continuity) produces the Laplacian structure:
     <strong>Example:</strong>
-    $\mathbf{J} = -k \nabla \phi$—then the rate of change over time must equal the negative 
-    divergence of that flux. This collapse of the <strong>Driver</strong> (Gradient) into the 
-    <strong>Accountant</strong> (Continuity) is what synthesizes the Laplacian architecture: 
-    $\frac{\partial \phi}{\partial t} = -\nabla \cdot \mathbf{J} = k \nabla^2 \phi$.
+    For example, Fourier’s and Fick’s laws say:
+  $\mathbf{J} = -k \nabla \phi$.
+  The continuity equation then tells us that the time change of the quantity is the
+  negative divergence of that flux. Putting these two ideas together gives the
+  familiar diffusion equation:
+  
+
+$$
+    \frac{\partial \phi}{\partial t}
+    = -\nabla \cdot \mathbf{J}
+    = k \nabla^2 \phi.
+  $$
   </div>
 
   
