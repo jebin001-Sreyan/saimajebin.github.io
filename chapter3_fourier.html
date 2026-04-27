@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Chapter 3 — The Frequency Inside the Noise</title>
+
+<!-- MathJax for beautiful mathematics -->
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    tags: 'ams'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
+  chtml: { scale: 1.08, matchFontHeight: false }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+<!-- Cormorant Garamond for headings — pairs beautifully with Cambria body -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap" rel="stylesheet" />
+
+<style>
+/* ─── CSS Variables ─────────────────────────────────────── */
+:root {
+  --cream:        #F7F3EC;
+  --cream-dark:   #EDE7DA;
+  --cream-mid:    #E6DFD0;
+  --black:        #111111;
+  --maroon:       #7A1A1A;
+  --maroon-light: #9B2B2B;
+  --terra:        #A07050;    /* medium terracotta — accent, indents */
+  --terra-light:  #C4A882;
+  --rule:         #CFC5B4;
+  --caption:      #5A5248;
+  --code-bg:      #EEE8DE;
+  --fig-border:   #D8D0C2;
+}
+
+/* ─── Base ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 18px; scroll-behavior: smooth; }
+
+body {
+  background-color: var(--cream);
+  color: var(--black);
+  font-family: Cambria, 'Hoefler Text', Georgia, serif;
+  font-size: 1rem;
+  line-height: 1.82;
+  letter-spacing: 0.012em;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* subtle paper grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* ─── Layout ─────────────────────────────────────────────── */
+.page-wrap {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 4rem 2rem 6rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Chapter Header ─────────────────────────────────────── */
+.chapter-header {
+  margin-bottom: 4rem;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 2.2rem;
+}
+
+.chapter-label {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--terra);
+  margin-bottom: 0.7rem;
+}
+
+.chapter-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 2.55rem;
+  font-weight: 600;
+  color: var(--maroon);
+  line-height: 1.18;
+  margin-bottom: 0.5rem;
+}
+
+.chapter-subtitle {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.22rem;
+  font-style: italic;
+  color: var(--terra);
+  font-weight: 400;
+}
+
+/* ─── Section Headings ───────────────────────────────────── */
+h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.62rem;
+  font-weight: 600;
+  color: var(--maroon);
+  margin-top: 3.4rem;
+  margin-bottom: 1.1rem;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid var(--rule);
+  letter-spacing: 0.01em;
+}
+
+h3 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.22rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--maroon-light);
+  margin-top: 2.4rem;
+  margin-bottom: 0.8rem;
+  padding-left: 1.0rem;
+  border-left: 3px solid var(--terra-light);
+  letter-spacing: 0.01em;
+}
+
+/* ─── Body Text ──────────────────────────────────────────── */
+p {
+  margin-bottom: 1.25rem;
+}
+
+strong {
+  font-weight: bold;
+  color: var(--black);
+}
+
+em {
+  font-style: italic;
+}
+
+/* ─── Equations ──────────────────────────────────────────── */
+.eq-block {
+  margin: 1.8rem 0;
+  overflow-x: auto;
+  text-align: center;
+}
+
+/* ─── Figures ────────────────────────────────────────────── */
+.figure {
+  margin: 2.4rem 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.figure img {
+  width: 100%;
+  max-width: 720px;
+  border: 1px solid var(--fig-border);
+  border-radius: 3px;
+  box-shadow: 0 2px 14px rgba(80,55,30,0.09);
+  background: #fff;
+}
+
+.figure figcaption {
+  margin-top: 0.65rem;
+  font-size: 0.84rem;
+  color: var(--caption);
+  font-style: italic;
+  text-align: center;
+  max-width: 620px;
+  line-height: 1.55;
+}
+
+.figure figcaption .fig-label {
+  font-style: normal;
+  font-weight: bold;
+  color: var(--terra);
+  margin-right: 0.3rem;
+}
+
+/* ─── Flowchart / Code Block ────────────────────────────── */
+.flowchart {
+  background: var(--code-bg);
+  border-left: 4px solid var(--terra);
+  border-radius: 0 4px 4px 0;
+  padding: 1.6rem 1.8rem;
+  margin: 2rem 0;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: var(--black);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* ─── Toolkit Box ────────────────────────────────────────── */
+.toolkit {
+  background: var(--cream-dark);
+  border-top: 3px solid var(--maroon);
+  border-bottom: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 1.8rem 2rem 1.6rem;
+  margin: 2.4rem 0;
+}
+
+.toolkit-label {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.80rem;
+  font-weight: 600;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--maroon);
+  margin-bottom: 1.1rem;
+}
+
+.toolkit-step {
+  margin-bottom: 0.95rem;
+  padding-left: 1.1rem;
+  border-left: 2px solid var(--terra-light);
+  line-height: 1.65;
+}
+
+.toolkit-step .step-num {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--terra);
+  display: block;
+  margin-bottom: 0.15rem;
+}
+
+/* ─── Long Story Short block ────────────────────────────── */
+.long-story {
+  border-top: 1px solid var(--rule);
+  margin-top: 3.5rem;
+  padding-top: 2rem;
+}
+
+.long-story-label {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.80rem;
+  font-weight: 600;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--terra);
+  margin-bottom: 1.1rem;
+}
+
+/* ─── Pull quote / emphasis block ───────────────────────── */
+.pull {
+  margin: 2rem 0;
+  padding: 1.1rem 1.6rem;
+  border-left: 4px solid var(--maroon);
+  background: var(--cream-mid);
+  font-style: italic;
+  color: var(--black);
+  font-size: 1.04rem;
+  line-height: 1.70;
+  border-radius: 0 3px 3px 0;
+}
+
+/* ─── Transition line ───────────────────────────────────── */
+.next-chapter {
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  font-style: italic;
+  color: var(--caption);
+  font-size: 0.93rem;
+  line-height: 1.65;
+}
+
+/* ─── Section rule ornament ─────────────────────────────── */
+.ornament {
+  text-align: center;
+  color: var(--terra-light);
+  margin: 2.5rem 0 1.5rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.5em;
+  user-select: none;
+}
+
+/* ─── Responsive ─────────────────────────────────────────── */
+@media (max-width: 600px) {
+  html { font-size: 16px; }
+  .page-wrap { padding: 2.5rem 1.2rem 4rem; }
+  .chapter-title { font-size: 1.9rem; }
+  .flowchart { font-size: 0.72rem; padding: 1.1rem 1.1rem; }
+}
+</style>
+</head>
+
+<body>
+<div class="page-wrap">
+
+  <!-- ── Chapter Header ─────────────────────────────────── -->
+  <header class="chapter-header">
+    <div class="chapter-label">Chapter Three</div>
+    <h1 class="chapter-title">The Frequency Inside the Noise</h1>
+    <div class="chapter-subtitle">A Fourier Story</div>
+  </header>
+
+  <!-- ── Opening ───────────────────────────────────────── -->
+  <p>Close your eyes. Listen to a piano playing a single key. Simple, clean, one thing.</p>
+
+  <p>Now listen to a full chord. Now someone talking. Now static from a broken radio.</p>
+
+  <p>Here is what a physicist notices: none of those sounds are different <em>in kind.</em> They are all the same thing — air pressure wiggling your eardrum. The difference is not in what is happening. It is in the <em>story</em> happening underneath — how many rhythms are layered on top of each other, and at what speeds.</p>
+
+  <div class="pull">
+    Any signal, no matter how messy, is secretly a superposition of simple oscillations. Finding those oscillations — reading their story — is what Fourier analysis does.
+  </div>
+
+  <p>Learn it once for sound, and your brain will automatically speak the same vocabulary for every wave system you ever meet: water, light, rotating fluids, even the slow inertial sloshing of a lake responding to a storm.</p>
+
+  <!-- ── Part I ──────────────────────────────────────────── -->
+  <h2>The Simplest Possible Thing: A Mass on a Spring</h2>
+
+  <p>Before complexity, we need to understand simplicity. Pull a mass away from its resting position. The spring fights back with force $F = -kx$. Newton takes over:</p>
+
+  <div class="eq-block">$$m\ddot{x} + kx = 0$$</div>
+
+  <p>The solution is a perfect, eternal cosine:</p>
+
+  <div class="eq-block">$$x(t) = A\cos(\omega_0 t + \phi), \qquad \omega_0 = \sqrt{\frac{k}{m}}$$</div>
+
+  <p>One number, $\omega_0$ — the <strong>natural frequency</strong> — tells the whole story. Stiffer spring, faster rhythm. Heavier mass, slower rhythm. The system has a preference, one particular beat it falls into whenever you disturb it.</p>
+
+  <figure class="figure">
+    <img src="images/fig3_1_single_oscillator.png"
+         alt="A clean cosine x(t) = A cos(omega_0 t) over two full periods" />
+    <figcaption>
+      <span class="fig-label">Figure 3.1</span>
+      A single oscillator: $x(t) = A\cos(\omega_0 t)$ over two full periods.
+      One frequency, one amplitude. This is the atom of everything that follows.
+    </figcaption>
+  </figure>
+
+  <p>Hold this picture in your mind. It is the atom of everything that follows.</p>
+
+  <!-- ── Part II ─────────────────────────────────────────── -->
+  <h2>Sound: The Best Classroom Nature Ever Built</h2>
+
+  <h3>A Pure Tone Is a Spring Wearing an Acoustic Costume</h3>
+
+  <p>Sound is air pressure doing exactly what the mass on the spring does. A tuning fork at 440 Hz pushes and pulls air molecules, which push their neighbours, and a pressure wave travels outward. At your eardrum:</p>
+
+  <div class="eq-block">$$p(t) = A\cos(2\pi \cdot 440 \cdot t)$$</div>
+
+  <p>One frequency. One pure tone. One Fourier component. This is the note A above middle C, and a tuning fork sounds like a tuning fork precisely because it produces almost nothing else — no other rhythms hiding underneath.</p>
+
+  <figure class="figure">
+    <img src="images/fig3_2_pure_tone_440hz.png"
+         alt="Pure tone at 440 Hz over 5 milliseconds" />
+    <figcaption>
+      <span class="fig-label">Figure 3.2</span>
+      $p(t) = A\cos(2\pi \cdot 440 \cdot t)$ over 5 milliseconds.
+      Period $T = 1/440 \approx 2.27$ ms. The acoustic equivalent of a single mass on a spring.
+    </figcaption>
+  </figure>
+
+  <p>Now ask: what does this look like not in time, but <em>in frequency?</em> If you mapped "how much of each frequency is present," you'd get a single spike at 440 Hz. Dead silence everywhere else. That right there — that map — is the beginning of the Fourier transform.</p>
+
+  <figure class="figure">
+    <img src="images/fig3_3_time_vs_frequency.png"
+         alt="Time domain cosine alongside single frequency spike at 440 Hz" />
+    <figcaption>
+      <span class="fig-label">Figure 3.3</span>
+      Same signal, two languages. Left: how the pressure varies with time.
+      Right: which frequencies are present — one spike, nothing else.
+    </figcaption>
+  </figure>
+
+  <p>Same signal. Two languages. The left panel tells you how it moves through time. The right panel tells you what it is made of.</p>
+
+  <h3>A Chord — Where the Story Gets Interesting</h3>
+
+  <p>Press C (262 Hz), E (330 Hz), and G (392 Hz) at once. A C major chord. The pressure at your eardrum is now three cosines, stacked:</p>
+
+  <div class="eq-block">$$p(t) = A_1\cos(2\pi \cdot 262 \cdot t) + A_2\cos(2\pi \cdot 330 \cdot t) + A_3\cos(2\pi \cdot 392 \cdot t)$$</div>
+
+  <p>The time-domain signal looks like a mess — nothing like a clean cosine. But the frequency-domain picture? Three clean spikes. C, E, G. The structure never disappeared. It was just hiding.</p>
+
+  <figure class="figure">
+    <img src="images/fig3_4_chord_time_vs_freq.png"
+         alt="C major chord: wiggly time domain on left, three clean spikes on right" />
+    <figcaption>
+      <span class="fig-label">Figure 3.4</span>
+      A C major chord. Left: the superposed waveform — complicated in time.
+      Right: three clean spikes at 262, 330, and 392 Hz. The complexity was never in the physics.
+    </figcaption>
+  </figure>
+
+  <div class="pull">
+    The complexity was never in the physics. It was only in our perspective. Switching to the frequency domain is like switching languages mid-sentence and suddenly understanding what someone was saying the whole time.
+  </div>
+
+  <h3>The Human Voice — Where It Gets Wild</h3>
+
+  <p>A spoken vowel — say "ah" — is not three frequencies. It is hundreds. Your vocal cords vibrate at a fundamental pitch, maybe 150 Hz, and the shape of your throat and mouth amplifies certain harmonics — multiples of that fundamental — while damping others. Those amplified clusters are called <strong>formants</strong>, and they are precisely what makes your voice sound like yours and not like anyone else's, even on the same note.</p>
+
+  <p>Look at the time-domain waveform of a spoken vowel: crumpled paper. Look at the frequency spectrum: a harmonic ladder rising from the fundamental, with two formant humps draped over it like a tent. Completely readable. The vocabulary of the voice, written in frequency.</p>
+
+  <figure class="figure">
+    <img src="images/fig3_5_vowel_spectrum.png"
+         alt="Spoken vowel waveform alongside its frequency spectrum with formants" />
+    <figcaption>
+      <span class="fig-label">Figure 3.5</span>
+      The human voice, vowel "ah." Left: 60 ms of the time waveform — visually chaotic.
+      Right: harmonics marching up from 150 Hz, with formant regions F1 and F2 clearly visible.
+      The time domain lies. The frequency domain tells the truth.
+    </figcaption>
+  </figure>
+
+  <p>The information was always there. The transform just taught us to read it.</p>
+
+  <h3>Your Ear Has Been Doing This Since Before You Were Born</h3>
+
+  <p>Here is the part that stops students cold: you do not need a computer to perform Fourier analysis on sound. You are doing it right now, physically, inside your skull.</p>
+
+  <p>The <strong>cochlea</strong> — the spiral-shaped organ of your inner ear — is lined with roughly 16,000 hair cells. Each one is tuned to a different frequency. High frequencies fire cells near the base of the spiral. Low frequencies fire cells near the tip. When sound enters, different cells respond in proportion to how much of their particular frequency is present in the signal.</p>
+
+  <p>Your cochlea is a biological Fourier spectrum analyser. The fact that you can pick a friend's voice out of a noisy room, or tell a violin from a piano on the same note — that is real-time Fourier decomposition, running in wetware, continuously, without you doing a thing.</p>
+
+  <figure class="figure">
+    <img src="images/fig3_6_cochlea_schematic.png"
+         alt="Unrolled cochlea schematic showing frequency-to-position mapping" />
+    <figcaption>
+      <span class="fig-label">Figure 3.6</span>
+      The unrolled cochlea. ~16,000 hair cells, each tuned to one frequency.
+      High frequencies at the base, low frequencies at the apex.
+      Running continuously, in both ears, since the moment you were born.
+    </figcaption>
+  </figure>
+
+  <p>If your brain already understands Fourier analysis, the mathematics is just your pen catching up to what your ears already know.</p>
+
+  <!-- ── Part III ────────────────────────────────────────── -->
+  <h2>Making It Exact: The Transform</h2>
+
+  <h3>It Is a Change of Vocabulary, Not a New Subject</h3>
+
+  <p>You already know how to decompose a vector:</p>
+
+  <div class="eq-block">$$\vec{v} = v_x\,\hat{i} + v_y\,\hat{j} + v_z\,\hat{k}$$</div>
+
+  <p>Each component tells you how much of each direction is present. The basis vectors are orthogonal — they do not talk to each other — so the decomposition is clean and unique.</p>
+
+  <p>A signal $f(t)$ is the same thing, but in an infinite-dimensional space. The Fourier transform decomposes it onto a basis of pure oscillations $e^{i\omega t}$. These are also orthogonal — a sine at 440 Hz does not contaminate a sine at 441 Hz. The decomposition is still clean, still unique.</p>
+
+  <div class="eq-block">
+    $$\tilde{f}(\omega) = \int_{-\infty}^{\infty} f(t)\, e^{-i\omega t}\, dt \qquad \text{(time} \to \text{frequency)}$$
+  </div>
+
+  <div class="eq-block">
+    $$f(t) = \frac{1}{2\pi}\int_{-\infty}^{\infty} \tilde{f}(\omega)\, e^{i\omega t}\, d\omega \qquad \text{(frequency} \to \text{time)}$$
+  </div>
+
+  <p>The forward transform is a probe: for each frequency $\omega$, it asks <em>how strongly does this signal vibrate here?</em> The integral accumulates the answer over all time. Large result means lots of that frequency. Near-zero means it is absent.</p>
+
+  <p>And these two equations are not approximations. <strong>Not a single bit of information is lost.</strong> Time domain and frequency domain are the same story told in two different languages.</p>
+
+  <h3>The Power Spectrum — The Diagnostic Tool You Will Actually Use</h3>
+
+  <p>Physicists do not usually work with $\tilde{f}(\omega)$ directly — it is complex-valued, which makes it harder to read at a glance. Instead, we reach for the <strong>power spectrum</strong>:</p>
+
+  <div class="eq-block">$$S(\omega) = |\tilde{f}(\omega)|^2$$</div>
+
+  <p>Real. Non-negative. And physically clear: it tells you how much energy the signal carries at each frequency. This is what your audio equaliser displays. What a seismologist reads after an earthquake. What we compute from ocean current records.</p>
+
+  <p>Here is the thinking pattern — the diagnostic story — that works for any signal you ever encounter:</p>
+
+  <div class="flowchart">You have a signal f(t) — messy, confusing, unreadable.
+              │
+              ▼
+  Fourier transform → f̃(ω)
+              │
+              ▼
+  Power spectrum  S(ω) = |f̃(ω)|²
+              │
+        ┌─────┴──────────────────────────────────┐
+        ▼                                        ▼
+    PEAKS                                  BACKGROUND
+        │                                        │
+  Sharp peak at ω₀                   Flat  →  random noise
+  = natural frequency            ∝ 1/ω²  →  slow, drifting,
+        │                                 correlated motion
+  Narrow peak  →  low damping
+  Wide peak    →  high damping
+        │
+  Harmonics at 2ω₀, 3ω₀ ?
+  → system is nonlinear
+    (guitar string, not tuning fork)
+              │
+              ▼
+       You now understand the system.</div>
+
+  <p>Memorise the logic of that story. The formulas follow naturally once the logic is in your bones.</p>
+
+  <!-- ── Part IV ─────────────────────────────────────────── -->
+  <h2>Resonance — When a System Has Strong Opinions</h2>
+
+  <p>Every oscillating system has a natural frequency, and it has a strong preference for it. Drive it at that frequency and energy accumulates — the amplitude grows, sometimes violently. This is <strong>resonance</strong>, and the power spectrum is how you find it without waiting for something to break.</p>
+
+  <p>Add driving and friction to the oscillator:</p>
+
+  <div class="eq-block">$$m\ddot{x} + b\dot{x} + kx = F_0\cos(\omega_{\text{drive}}\, t)$$</div>
+
+  <p>The steady-state amplitude is:</p>
+
+  <div class="eq-block">$$A(\omega_{\text{drive}}) = \frac{F_0/m}{\sqrt{(\omega_0^2 - \omega_{\text{drive}}^2)^2 + (b/m)^2\,\omega_{\text{drive}}^2}}$$</div>
+
+  <p>Peak at $\omega_{\text{drive}} = \omega_0$. In the power spectrum, this shows up as a <strong>Lorentzian</strong> — a peak with a specific shape. Its position is always $\omega_0$, a property of the system, not of how you measured it. Its width encodes damping. Its height encodes energy.</p>
+
+  <p>A wine glass has a natural frequency. Sing that note loudly enough and the glass shatters. A soprano knows this intuitively. A physicist reads it in the spectrum before the glass breaks.</p>
+
+  <figure class="figure">
+    <img src="images/fig3_7_resonance_peak.png"
+         alt="Resonance amplitude curves for three damping values" />
+    <figcaption>
+      <span class="fig-label">Figure 3.7</span>
+      $A(\omega_\text{drive})$ for three levels of damping, all peaking at $\omega_0$.
+      Narrow and tall: low damping, the system rings for a long time.
+      Broad and short: high damping, energy bleeds out fast.
+      The peak position is always a property of the system — not the measurement.
+    </figcaption>
+  </figure>
+
+  <!-- ── Part V ──────────────────────────────────────────── -->
+  <h2>The Seven-Step Vocabulary — Your Portable Toolkit</h2>
+
+  <p>Every time you encounter a wave, an oscillation, a fluctuating signal of any kind — run this story through your head.</p>
+
+  <div class="toolkit">
+    <div class="toolkit-label">Box 3.1 — The Fourier Diagnostic Checklist</div>
+
+    <div class="toolkit-step">
+      <span class="step-num">Step 1 — Find the oscillator</span>
+      What is the "mass"? What is the "spring"? What has inertia, and what provides the restoring force?
+    </div>
+
+    <div class="toolkit-step">
+      <span class="step-num">Step 2 — Write a single mode</span>
+      Can you write $e^{i(kx-\omega t)}$, or $A\cos(\omega_0 t)$? That is your Fourier building block. If you can write one mode, you already have the vocabulary.
+    </div>
+
+    <div class="toolkit-step">
+      <span class="step-num">Step 3 — Find the dispersion relation</span>
+      How does $\omega$ depend on $k$? For sound: $\omega = c_s k$ — all frequencies travel together. This relation <em>is</em> the physical signature of the system.
+    </div>
+
+    <div class="toolkit-step">
+      <span class="step-num">Step 4 — Transform the data</span>
+      Compute $S(\omega) = |\tilde{f}(\omega)|^2$.
+    </div>
+
+    <div class="toolkit-step">
+      <span class="step-num">Step 5 — Read the peaks</span>
+      Each peak is a natural mode. Position = natural frequency. Width = damping. Height = energy.
+    </div>
+
+    <div class="toolkit-step">
+      <span class="step-num">Step 6 — Read the background</span>
+      Flat = white noise, no memory. Falling as $1/\omega^2$ = slow drift, long memory. Falling as $1/\omega$ = long-range correlations, common in biological and geophysical systems.
+    </div>
+
+    <div class="toolkit-step">
+      <span class="step-num">Step 7 — Ask: is this universal?</span>
+      If the dispersion relation looks like one you have seen before — it probably <em>is</em> the same system, dressed in different physics. Change the labels, same story.
+    </div>
+  </div>
+
+  <p>Seven steps. Works on sound, light, ocean waves, gravitational ripples in spacetime. Fourier is not a technique. It is a way of reading the universe's handwriting.</p>
+
+  <!-- ── Part VI ─────────────────────────────────────────── -->
+  <h2>The Leap: From a Concert Hall to a Lake</h2>
+
+  <p>You have seen that a sound wave in air obeys:</p>
+
+  <div class="eq-block">$$\frac{\partial^2 p'}{\partial t^2} = c_s^2\,\frac{\partial^2 p'}{\partial x^2}$$</div>
+
+  <p>Now look at the equation governing velocity in a rotating fluid — the kind of wave that sloshes in a lake when a storm passes overhead:</p>
+
+  <div class="eq-block">$$\frac{\partial^2 u}{\partial t^2} + f^2 u = \text{(forcing and friction)}$$</div>
+
+  <p>Look at the structure. The Coriolis parameter $f$ — the Earth's rotation rate projected onto the local vertical — is playing the role of the spring constant. The fluid velocity $u$ is the mass. The system has a natural frequency: $f$ itself, the <strong>inertial frequency</strong>.</p>
+
+  <p>Disturb a rotating fluid — a storm, a pressure front — and even after the forcing stops, the fluid keeps oscillating at $f$. These are <strong>near-inertial oscillations</strong>, and they show up as a peak in the power spectrum of current measurements, at frequency $f/2\pi$, exactly as a piano string's resonance shows up as a peak in its acoustic spectrum.</p>
+
+  <p>Lake Superior sits at roughly 47°N. The Coriolis parameter there gives an inertial period of approximately 16.8 hours. A current meter moored in the western basin, recording velocity over years, shows that peak standing clear above the background — the lake's resonance signature, the fingerprint of the Earth's rotation encoded in the motion of the water.</p>
+
+  <figure class="figure">
+    <img src="images/fig3_8_lake_superior_spectrum.png"
+         alt="Power spectrum of Lake Superior current velocity showing inertial peak" />
+    <figcaption>
+      <span class="fig-label">Figure 3.8</span>
+      Power spectrum of current velocity from the western Lake Superior mooring
+      (NDBC Buoy 45006). The inertial peak at 1.43 cpd ($T_i \approx 16.8$ hr) stands
+      clear above the red-noise background. K1 and M2 tidal lines are also visible.
+      The lake is an oscillator. Fourier analysis is how we read it.
+    </figcaption>
+  </figure>
+
+  <div class="pull">
+    The physics of a concert hall and the physics of a lake are the same sentence in two different dialects. Fourier analysis is how you hear them as the same sentence.
+  </div>
+
+  <!-- ── Part VII ────────────────────────────────────────── -->
+  <h2>One Technical Reality You Cannot Ignore</h2>
+
+  <p>In practice, you never have an infinite continuous signal. You have $N$ measurements, spaced $\Delta t$ apart. Two hard limits follow immediately.</p>
+
+  <p><strong>The Nyquist limit:</strong> You cannot see frequencies higher than $f_{\max} = 1/(2\Delta t)$. Anything above that folds back into the spectrum as a ghost frequency — an alias — and corrupts what you are reading. Sample fast enough, or filter first.</p>
+
+  <p><strong>Frequency resolution:</strong> With total record length $T = N\Delta t$, the finest frequency difference you can resolve is $\Delta f = 1/T$. Wanting to separate the inertial peak from a nearby tidal line? You need long records — weeks to months of data.</p>
+
+  <p>These are not bookkeeping details. They are physical constraints on what is knowable from a finite window of observation. Every audio engineer, every oceanographer, every seismologist lives inside these same walls.</p>
+
+  <!-- ── Long Story Short ───────────────────────────────── -->
+  <div class="long-story">
+    <div class="long-story-label">Long Story Short</div>
+
+    <p>The time domain tells you the history. The frequency domain tells you the character. Both are complete descriptions of the same reality — neither is more true than the other. They are the same book in two languages, and the Fourier transform is the translator.</p>
+
+    <p>A peak in the power spectrum is a natural mode of the system made visible. Its position is what the system <em>is.</em> Its width is how long it remembers. Its height is how much it cares.</p>
+
+    <p>From the mass on a spring, to the chord on a piano, to the vowel in a human voice, to the slow inertial rhythm of a lake responding to a storm — it is the same story, the same mathematics, the same seven-step vocabulary. The costumes change. The physics does not.</p>
+  </div>
+
+  <!-- ── Next Chapter ───────────────────────────────────── -->
+  <div class="next-chapter">
+    <em>Next:</em> we keep this machinery and walk into stochastic territory — what happens when the forcing is random? We will derive the power spectrum of a noisy oscillator, meet the Ornstein-Uhlenbeck process, and show that noise with structure is a very different animal from noise without it — and that the difference is legible, precisely, in the frequency domain.
+  </div>
+
+</div><!-- end .page-wrap -->
+</body>
+</html>
