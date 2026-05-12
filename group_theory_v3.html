@@ -340,6 +340,81 @@ Do I recognize any symmetries?
     <td><strong>Translational</strong> — physics unchanged after sliding the system</td>
     <td>Linear momentum <strong>p</strong></td>
     <td>Absolute position — only relative positions matter</td>
+<!-- ============================================================
+     INTRODUCTION
+     ============================================================ -->
+
+<h2>The Detective's Insight</h2>
+
+<p>Imagine you are a detective called to a mansion after a robbery. The floor plan is perfectly symmetric — the east wing is a mirror of the west wing. A witness tells you the thief went into the east wing. Do you search both wings?</p>
+
+<p>Of course not. The symmetry has already cut your work in half. You eliminated redundant territory without losing any information about the crime.</p>
+
+<p>Physics works by the same logic. Most systems in nature carry hidden symmetries. A hydrogen atom looks identical no matter which direction you rotate it. A crystal lattice repeats every few atoms. Two identical masses connected by identical springs behave the same whether you label them left-to-right or right-to-left. These symmetries let you throw away calculation work before you start. That is what group theory formalizes: a systematic way of finding what is redundant and discarding it.</p>
+
+<blockquote>Symmetry removes redundant information. Group theory is the machinery that identifies what is redundant and throws it away.</blockquote>
+
+
+<!-- ============================================================
+     THINKING PATTERN
+     ============================================================ -->
+
+<h2>How Physicists Actually Think About This</h2>
+
+<p>Before the worked example, here is the reasoning pattern that symmetry makes possible. This is the actual decision process, not just a slogan:</p>
+
+<div class="flowchart">START: I have a physics problem
+   |
+   v
+Do I recognize any symmetries?
+   |
+   +-- NO  --&gt;  Solve by brute force
+   |             (long, mechanical, gives numbers)
+   |
+   +-- YES --&gt;  What does Noether's theorem say is conserved?
+                 |
+                 v
+              Can I use that conservation law
+              to reduce the problem?
+                 |
+                 +-- NO  --&gt;  Solve as normal
+                 |
+                 +-- YES --&gt;  Choose coordinates that respect
+                               the symmetry
+                                 |
+                                 v
+                               Equations decouple
+                                 |
+                                 v
+                               Solve the smaller problem
+                                 |
+                                 v
+                               END: same answer, far less work</div>
+
+<p>The detective doesn't search the whole mansion. The physicist doesn't solve the whole system. Both use structure to eliminate territory that doesn't need investigating.</p>
+
+
+<!-- ============================================================
+     TABLE 1
+     ============================================================ -->
+
+<h2>What Each Symmetry Buys You</h2>
+
+<table>
+  <tr>
+    <th>Symmetry</th>
+    <th>Conservation Law</th>
+    <th>What It Lets You Ignore</th>
+  </tr>
+  <tr>
+    <td><strong>Rotational</strong> — physics unchanged after spinning the system</td>
+    <td>Angular momentum <strong>L</strong></td>
+    <td>Two spatial dimensions — motion collapses to a plane</td>
+  </tr>
+  <tr>
+    <td><strong>Translational</strong> — physics unchanged after sliding the system</td>
+    <td>Linear momentum <strong>p</strong></td>
+    <td>Absolute position — only relative positions matter</td>
   </tr>
   <tr>
     <td><strong>Left-right exchange</strong> — swapping identical parts leaves physics unchanged</td>
@@ -362,115 +437,294 @@ Do I recognize any symmetries?
 
 
 <!-- ============================================================
-     CLASSICAL EXAMPLE
+     THE PROBLEM
      ============================================================ -->
 
 <hr class="divider">
 
-<h2>Classical Mechanics: Two Masses on Springs</h2>
+<h2>The Problem: Two Masses on Springs</h2>
 
-<p>Two identical masses sit on a frictionless table. Mass one connects to a fixed left wall by a spring of stiffness $k$. Mass two connects to the right wall by an identical spring. The two masses are also connected to each other by a third spring of the same stiffness. The question: at what frequencies does this system naturally vibrate?</p>
+<p>Two identical masses sit on a frictionless table. Mass one connects to a fixed left wall through a spring of stiffness $k$. Mass two connects to a fixed right wall through an identical spring. The two masses are also connected to each other by a third spring, same stiffness $k$. We want to find the natural frequencies at which this system oscillates.</p>
 
 <div class="diagram-box">
 <pre>
-  Wall   k      k      k   Wall
-   |--/\/\--[M1]--/\/\--[M2]--/\/\--|
+  Fixed Wall                                         Fixed Wall
+      |                                                   |
+      |  Spring k     Mass m    Spring k    Mass m   Spring k  |
+      |--/\/\/\--[  M1  ]--/\/\/\--[  M2  ]--/\/\/\--|
+      |                                                   |
 
-               x1 -->   x2 -->
+                    x1 (rightward)        x2 (rightward)
 
-  M1, M2 : identical masses m
-  All springs: stiffness k
-  x1, x2 : displacements from rest
+  x1 = displacement of Mass 1 from its rest position
+  x2 = displacement of Mass 2 from its rest position
+  All three springs are identical: stiffness k
+  Both masses are identical: mass m
 </pre>
-<div class="diagram-caption">Three identical springs connecting two identical masses to fixed walls.</div>
+<div class="diagram-caption">Three identical springs. Two identical masses. Two fixed walls.</div>
 </div>
 
-<h3>Brute Force: Writing the Equations</h3>
+<p>This is not an abstract toy problem. Atoms in a diatomic molecule vibrate with exactly this structure. Electrons in a lattice feel forces of this form. What we learn from two masses carries directly into the physics of phonons, molecular spectra, and solid-state band theory.</p>
 
-<p>The force on mass one comes from the left wall spring and the middle spring. If $x_1 > x_2$, the middle spring is stretched and pulls mass one back toward mass two:</p>
+<p>We are going to solve this two ways. First the brute force approach, showing every step. Then the symmetry approach, showing how much of that work disappears. Both methods stop at the frequencies and mode shapes. After that, one shared general solution applies to both.</p>
+
+
+<!-- ============================================================
+     BRUTE FORCE
+     ============================================================ -->
+
+<h2>Method One: Brute Force</h2>
+
+<h3>Writing Newton's Second Law</h3>
+
+<p>The force on mass one comes from two springs. The left wall spring pulls it back toward zero with force $-kx_1$. The middle spring pulls it toward mass two: if $x_1 > x_2$, the middle spring is stretched and pulls mass one leftward, giving force $-k(x_1 - x_2)$.</p>
 
 <div class="eq">
 $$m\ddot{x}_1 = -kx_1 - k(x_1 - x_2) = -2kx_1 + kx_2$$
+</div>
+
+<p>By the same logic for mass two:</p>
+
+<div class="eq">
 $$m\ddot{x}_2 = -kx_2 - k(x_2 - x_1) = -2kx_2 + kx_1$$
 </div>
 
-<p>Neither equation can be solved without knowing the other. They are entangled. The standard technique is to assume both masses oscillate at the same frequency $\omega$: guess $x_1 = A_1 e^{i\omega t}$ and $x_2 = A_2 e^{i\omega t}$. Since $\frac{d^2}{dt^2}e^{i\omega t} = -\omega^2 e^{i\omega t}$, each differential equation becomes algebraic. Substituting and dividing by $e^{i\omega t}$:</p>
+<p>Rewritten cleanly:</p>
+
+<div class="eq">
+$$m\ddot{x}_1 + 2kx_1 - kx_2 = 0 \qquad \cdots \text{Equation 1}$$
+$$m\ddot{x}_2 + 2kx_2 - kx_1 = 0 \qquad \cdots \text{Equation 2}$$
+</div>
+
+<p>Neither equation can be solved without knowing the other. They are entangled.</p>
+
+<h3>Assuming Exponential Solutions</h3>
+
+<p>The standard technique is to guess that both masses oscillate at the same frequency $\omega$, possibly with different amplitudes:</p>
+
+<div class="eq">
+$$x_1(t) = A_1 e^{i\omega t} \qquad x_2(t) = A_2 e^{i\omega t}$$
+</div>
+
+<p>This works because differentiation of an exponential just multiplies it: $\frac{d^2}{dt^2}e^{i\omega t} = (i\omega)^2 e^{i\omega t} = -\omega^2 e^{i\omega t}$. So $\ddot{x}_1 = -\omega^2 x_1$ and $\ddot{x}_2 = -\omega^2 x_2$. The differential equations become algebraic.</p>
+
+<h3>Substituting and Simplifying</h3>
+
+<p>Put $\ddot{x}_1 = -\omega^2 x_1$ into Equation 1, divide through by $e^{i\omega t}$:</p>
 
 <div class="eq">
 $$(2k - m\omega^2)A_1 - kA_2 = 0$$
+</div>
+
+<p>Do the same with Equation 2:</p>
+
+<div class="eq">
 $$-kA_1 + (2k - m\omega^2)A_2 = 0$$
 </div>
 
-<p>In matrix form:</p>
+<h3>Setting Up the Matrix</h3>
+
+<p>These two equations form a homogeneous linear system:</p>
 
 <div class="eq">
 $$\begin{pmatrix} 2k - m\omega^2 & -k \\ -k & 2k - m\omega^2 \end{pmatrix} \begin{pmatrix} A_1 \\ A_2 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}$$
 </div>
 
-<div class="callout">For a non-trivial solution, the determinant must be zero. That condition gives the natural frequencies.</div>
+<div class="callout">
+  A homogeneous system $\mathbf{M}\mathbf{A} = 0$ has a non-zero solution only if $\det(\mathbf{M}) = 0$. That condition — called the characteristic equation — gives the natural frequencies.
+</div>
 
-<p>Computing the determinant and expanding:</p>
+<h3>Computing the Determinant</h3>
 
 <div class="eq">
-$$(2k - m\omega^2)^2 - k^2 = 0$$
+$$\det = (2k - m\omega^2)^2 - k^2 = 0$$
+</div>
+
+<p>Expanding:</p>
+
+<div class="eq-step">
 $$4k^2 - 4km\omega^2 + m^2\omega^4 - k^2 = 0$$
+</div>
+
+<div class="eq-step">
 $$m^2\omega^4 - 4km\omega^2 + 3k^2 = 0$$
 </div>
 
-<p>Applying the quadratic formula with $u = \omega^2$:</p>
+<h3>Solving for the Frequencies</h3>
+
+<p>Let $u = \omega^2$. This is a quadratic in $u$:</p>
 
 <div class="eq">
 $$u = \frac{4km \pm \sqrt{16k^2m^2 - 12k^2m^2}}{2m^2} = \frac{4km \pm 2km}{2m^2}$$
 </div>
 
-<p>Two frequencies emerge:</p>
+<p>Two solutions:</p>
 
 <div class="eq">
 $$\omega_1 = \sqrt{\frac{k}{m}} \qquad \omega_2 = \sqrt{\frac{3k}{m}}$$
 </div>
 
-<p>Back-substituting to find the mode shapes: for $\omega_1$, we get $A_1 = A_2$ — both masses move together. For $\omega_2$, we get $A_1 = -A_2$ — the masses move in opposite directions.</p>
+<h3>Finding the Mode Shapes</h3>
+
+<p>For $\omega_1$, substitute $m\omega_1^2 = k$ back into the first algebraic equation:</p>
+
+<div class="eq">
+$$(2k - k)A_1 - kA_2 = 0 \implies A_1 = A_2$$
+</div>
+
+<p>Both masses move in the same direction with the same amplitude. The middle spring neither stretches nor compresses.</p>
+
+<p>For $\omega_2$, substitute $m\omega_2^2 = 3k$:</p>
+
+<div class="eq">
+$$(2k - 3k)A_1 - kA_2 = 0 \implies A_1 = -A_2$$
+</div>
+
+<p>The masses move in opposite directions with equal amplitudes. The middle spring oscillates at maximum compression and extension.</p>
 
 <div class="summary-box">
-  <strong>What brute force cost:</strong> Newton's laws → exponential guess → matrix → determinant → polynomial expansion → quadratic formula → back-substitution. Eight algebraic steps. For three masses this demands a $3 \times 3$ determinant. For ten masses, a $10 \times 10$ one. The method scales badly and gives numbers without explaining why those numbers have the values they do.
+  <strong>What brute force cost:</strong> Newton's laws → exponential guess → matrix form → determinant → polynomial expansion → quadratic formula → back-substitution. Eight algebraic steps to reach two frequencies and two mode shapes. For three masses this requires a $3 \times 3$ determinant. For ten masses, a $10 \times 10$ determinant. The method scales badly and gives numbers without explaining why those numbers have the values they do.
 </div>
 
-<h3>Symmetry: The Short Path</h3>
 
-<p>Look at the physical setup. Swapping mass one and mass two leaves every spring force unchanged. The physics is identical before and after the swap. That is a symmetry, and it tells us something: there exist coordinates in which the problem falls apart into independent pieces.</p>
+<!-- ============================================================
+     SYMMETRY METHOD
+     ============================================================ -->
 
-<p>Define the center of mass position and the relative displacement:</p>
+<h2>Method Two: Using Symmetry</h2>
+
+<p>Look at the physical setup. Swapping mass one and mass two — exchanging $x_1$ and $x_2$ — leaves every spring force unchanged. The left spring becomes the right spring, the right becomes the left, and the middle stays the middle. The physics is identical before and after the swap.</p>
+
+<p>That is a symmetry. And the rule in physics is: when a system has a symmetry, there exist coordinates that respect it, and in those coordinates the problem simplifies dramatically.</p>
+
+<h3>Choosing the Right Coordinates</h3>
+
+<p>Define:</p>
 
 <div class="eq">
-$$X = \frac{x_1 + x_2}{2} \qquad x = x_1 - x_2$$
+$$X = \frac{x_1 + x_2}{2} \qquad \text{(center of mass — symmetric under the swap)}$$
+$$x = x_1 - x_2 \qquad \text{(relative displacement — antisymmetric under the swap)}$$
 </div>
 
-<p>$X$ does not change under the swap. $x$ changes sign. These are the natural coordinates. Add the two equations of motion:</p>
+<p>$X$ does not change when you swap $x_1$ and $x_2$. $x$ changes sign. These are the two natural modes the symmetry is telling us about, before any algebra.</p>
+
+<h3>Adding the Equations</h3>
+
+<p>Add Equation 1 and Equation 2:</p>
 
 <div class="eq">
-$$m\ddot{X} + kX = 0 \qquad \Rightarrow \qquad \omega_1 = \sqrt{\frac{k}{m}}$$
+$$m(\ddot{x}_1 + \ddot{x}_2) + 2k(x_1 + x_2) - k(x_1 + x_2) = 0$$
+$$m(\ddot{x}_1 + \ddot{x}_2) + k(x_1 + x_2) = 0$$
 </div>
 
-<p>Subtract the second from the first:</p>
+<p>Since $x_1 + x_2 = 2X$:</p>
 
 <div class="eq">
-$$m\ddot{x} + 3kx = 0 \qquad \Rightarrow \qquad \omega_2 = \sqrt{\frac{3k}{m}}$$
+$$\boxed{m\ddot{X} + kX = 0} \qquad \Rightarrow \qquad \omega_1 = \sqrt{\frac{k}{m}}$$
 </div>
 
-<p>Same two frequencies. Two additions instead of eight steps. And the physical reason is now visible: $\omega_1$ governs center-of-mass motion where the middle spring does nothing (effective stiffness $k$), while $\omega_2$ governs relative motion where the middle spring is fully engaged (effective stiffness $k + 2k = 3k$).</p>
+<p>A simple harmonic oscillator for $X$. One step.</p>
+
+<h3>Subtracting the Equations</h3>
+
+<p>Subtract Equation 2 from Equation 1:</p>
+
+<div class="eq">
+$$m(\ddot{x}_1 - \ddot{x}_2) + 2k(x_1 - x_2) + k(x_1 - x_2) = 0$$
+$$m(\ddot{x}_1 - \ddot{x}_2) + 3k(x_1 - x_2) = 0$$
+</div>
+
+<p>Since $x_1 - x_2 = x$:</p>
+
+<div class="eq">
+$$\boxed{m\ddot{x} + 3kx = 0} \qquad \Rightarrow \qquad \omega_2 = \sqrt{\frac{3k}{m}}$$
+</div>
+
+<p>Another simple harmonic oscillator, this time for $x$. One more step.</p>
+
+<p>The same two frequencies — same answer as brute force — reached in two additions instead of eight steps of algebra. And the physical reason is now visible: $\omega_1 = \sqrt{k/m}$ because when both masses move together the middle spring does nothing, so only the wall springs ($k$ each) contribute. $\omega_2 = \sqrt{3k/m}$ because when the masses move apart they compress the middle spring on top of the wall springs, giving an effective stiffness of $k + 2k = 3k$.</p>
+
+<div class="summary-box">
+  <strong>What symmetry cost:</strong> Recognize the swap symmetry → write $X$ and $x$ → add equations → subtract equations → done. Four conceptual moves to reach the same two frequencies, with physical understanding included at no extra charge.
+</div>
+
+
+<!-- ============================================================
+     COMPARISON TABLE
+     ============================================================ -->
+
+<h2>Comparing the Two Paths</h2>
+
+<table>
+  <tr>
+    <th>Stage</th>
+    <th>Brute Force</th>
+    <th>Symmetry</th>
+  </tr>
+  <tr>
+    <td>Starting move</td>
+    <td>Newton's laws for $x_1$ and $x_2$</td>
+    <td>Newton's laws for $x_1$ and $x_2$</td>
+  </tr>
+  <tr>
+    <td>Key decision</td>
+    <td>Guess $x_i = A_i e^{i\omega t}$</td>
+    <td>Recognize left-right swap symmetry</td>
+  </tr>
+  <tr>
+    <td>New variables</td>
+    <td>Unknown amplitude ratio $A_1/A_2$</td>
+    <td>$X = (x_1+x_2)/2$ and $x = x_1 - x_2$, chosen by symmetry</td>
+  </tr>
+  <tr>
+    <td>Heavy computation</td>
+    <td>$2 \times 2$ determinant, quadratic formula</td>
+    <td>Add the two equations; subtract the two equations</td>
+  </tr>
+  <tr>
+    <td>Mode shapes</td>
+    <td>Found by back-substitution after the frequencies</td>
+    <td>Built into $X$ and $x$ from the start</td>
+  </tr>
+  <tr>
+    <td>Physical insight</td>
+    <td>Numbers appear; reasons are buried</td>
+    <td>Effective stiffness of each mode is immediately visible</td>
+  </tr>
+  <tr>
+    <td><strong>Scales to 10 masses?</strong></td>
+    <td><strong>Requires a $10 \times 10$ determinant</strong></td>
+    <td><strong>Symmetry reduces it to independent modes regardless</strong></td>
+  </tr>
+</table>
+
+
+<!-- ============================================================
+     SHARED GENERAL SOLUTION
+     ============================================================ -->
 
 <div class="shared-box">
-  <h3>General Solution — Common to Both Methods</h3>
-  <p>Both paths reach the same two frequencies and the same two mode shapes. The general motion is their superposition:</p>
+  <h3>General Solution — Shared by Both Methods</h3>
+
+  <p>Both methods arrive at the same two frequencies and the same two mode shapes. From here, the general solution is identical regardless of which path you took to get there.</p>
+
+  <p>The motion of the system is a superposition of the two normal modes:</p>
+
   <div class="eq">
 $$\begin{pmatrix} x_1(t) \\ x_2(t) \end{pmatrix}
-= C_1 \begin{pmatrix} 1 \\ 1 \end{pmatrix} \cos\!\left(\omega_1 t + \phi_1\right)
-+ C_2 \begin{pmatrix} 1 \\ -1 \end{pmatrix} \cos\!\left(\omega_2 t + \phi_2\right)$$
+= C_1 \begin{pmatrix} 1 \\ 1 \end{pmatrix} \cos\!\left(\sqrt{\tfrac{k}{m}}\;t + \phi_1\right)
++ C_2 \begin{pmatrix} 1 \\ -1 \end{pmatrix} \cos\!\left(\sqrt{\tfrac{3k}{m}}\;t + \phi_2\right)$$
   </div>
-  <p>The four constants $C_1, C_2, \phi_1, \phi_2$ are fixed by initial conditions. Group theory shortens the path to the frequencies. The assembly of the general solution from those frequencies is the same either way.</p>
+
+  <p>Written out:</p>
+
+  <div class="eq">
+$$x_1(t) = C_1 \cos\!\left(\omega_1 t + \phi_1\right) + C_2 \cos\!\left(\omega_2 t + \phi_2\right)$$
+$$x_2(t) = C_1 \cos\!\left(\omega_1 t + \phi_1\right) - C_2 \cos\!\left(\omega_2 t + \phi_2\right)$$
+  </div>
+
+  <p>The four constants $C_1, C_2, \phi_1, \phi_2$ are fixed by the initial positions and velocities of both masses. This step is the same whether you used brute force or symmetry to find $\omega_1$ and $\omega_2$. Group theory shortens the path to the frequencies. The assembly of the general solution from those frequencies is common ground.</p>
 </div>
-
-
 <!-- ============================================================
      QUANTUM EXAMPLE — PARTICLE ON A RING
      ============================================================ -->
