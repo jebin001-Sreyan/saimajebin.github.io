@@ -578,51 +578,6 @@ $$\boxed{m\ddot{x} + 3kx = 0} \qquad \Rightarrow \qquad \omega_2 = \sqrt{\frac{3
      COMPARISON TABLE
      ============================================================ -->
 
-<h2>Comparing the Two Paths</h2>
-
-<table>
-  <tr>
-    <th>Stage</th>
-    <th>Brute Force</th>
-    <th>Symmetry</th>
-  </tr>
-  <tr>
-    <td>Starting move</td>
-    <td>Newton's laws for $x_1$ and $x_2$</td>
-    <td>Newton's laws for $x_1$ and $x_2$</td>
-  </tr>
-  <tr>
-    <td>Key decision</td>
-    <td>Guess $x_i = A_i e^{i\omega t}$</td>
-    <td>Recognize left-right swap symmetry</td>
-  </tr>
-  <tr>
-    <td>New variables</td>
-    <td>Unknown amplitude ratio $A_1/A_2$</td>
-    <td>$X = (x_1+x_2)/2$ and $x = x_1 - x_2$, chosen by symmetry</td>
-  </tr>
-  <tr>
-    <td>Heavy computation</td>
-    <td>$2 \times 2$ determinant, quadratic formula</td>
-    <td>Add the two equations; subtract the two equations</td>
-  </tr>
-  <tr>
-    <td>Mode shapes</td>
-    <td>Found by back-substitution after the frequencies</td>
-    <td>Built into $X$ and $x$ from the start</td>
-  </tr>
-  <tr>
-    <td>Physical insight</td>
-    <td>Numbers appear; reasons are buried</td>
-    <td>Effective stiffness of each mode is immediately visible</td>
-  </tr>
-  <tr>
-    <td><strong>Scales to 10 masses?</strong></td>
-    <td><strong>Requires a $10 \times 10$ determinant</strong></td>
-    <td><strong>Symmetry reduces it to independent modes regardless</strong></td>
-  </tr>
-</table>
-
 
 <!-- ============================================================
      SHARED GENERAL SOLUTION
