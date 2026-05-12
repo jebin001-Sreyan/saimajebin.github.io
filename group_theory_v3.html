@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Group Theory: Why Physicists Worship Symmetry</title>
+
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    packages: {'[+]': ['ams']}
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Cambria Math', 'Cambria', Georgia, serif;
+    font-style: normal;
+    background-color: #FAF8F5;
+    color: #292929;
+    line-height: 1.95;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 36px;
+    font-size: 19px;
+  }
+
+  .back-btn {
+    display: inline-block;
+    margin-bottom: 48px;
+    padding: 9px 22px;
+    background-color: #7B5540;
+    color: #FAF8F5;
+    text-decoration: none;
+    border-radius: 20px;
+    font-family: 'Cambria Math', 'Cambria', Georgia, serif;
+    font-size: 15px;
+    cursor: pointer;
+    border: none;
+  }
+  .back-btn:hover { background-color: #5e3e2c; }
+
+  h1 {
+    font-family: 'Cambria Math', 'Cambria', Georgia, serif;
+    font-size: 2.4em;
+    color: #111;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+
+  .subtitle {
+    font-size: 1em;
+    color: #7B5540;
+    margin-bottom: 50px;
+    font-style: italic;
+  }
+
+  h2 {
+    font-family: 'Cambria Math', 'Cambria', Georgia, serif;
+    font-size: 1.6em;
+    color: #111;
+    margin-top: 64px;
+    margin-bottom: 24px;
+    padding-left: 16px;
+    border-left: 4px solid #7B5540;
+    font-weight: 700;
+  }
+
+  h3 {
+    font-family: 'Cambria Math', 'Cambria', Georgia, serif;
+    font-size: 1.15em;
+    color: #111;
+    margin-top: 38px;
+    margin-bottom: 14px;
+    font-weight: 700;
+  }
+
+  p { margin-bottom: 22px; }
+
+  blockquote {
+    border-left: 4px solid #7B5540;
+    padding-left: 22px;
+    margin: 32px 0;
+    color: #292929;
+    font-size: 1.07em;
+    font-weight: 600;
+    font-style: italic;
+  }
+
+  /* ── Equation blocks ── */
+  .eq {
+    background-color: #F2EEE8;
+    border-left: 4px solid #C9A882;
+    padding: 18px 26px;
+    margin: 24px 0;
+    overflow-x: auto;
+    border-radius: 0 5px 5px 0;
+  }
+
+  .eq-step {
+    background-color: #EDE8DF;
+    border-left: 4px solid #7B5540;
+    padding: 14px 22px;
+    margin: 14px 0;
+    overflow-x: auto;
+    border-radius: 0 5px 5px 0;
+  }
+
+  /* ── ASCII diagram — key: monospace font on pre, overflow on container ── */
+  .diagram-box {
+    background-color: #F2EEE8;
+    border: 1px solid #C9A882;
+    border-radius: 6px;
+    padding: 24px 20px 20px 20px;
+    margin: 32px 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .diagram-box pre {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: pre;
+    overflow-x: visible;
+    text-align: left;
+    color: #1a1a1a;
+    margin: 0;
+    padding: 0;
+  }
+  .diagram-caption {
+    font-family: 'Cambria Math', 'Cambria', Georgia, serif;
+    font-size: 14.5px;
+    color: #7B5540;
+    margin-top: 14px;
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* ── Flowchart — monospace, white-space:pre, scrollable ── */
+  .flowchart {
+    background-color: #F2EEE8;
+    border: 1px solid #C9A882;
+    border-radius: 6px;
+    padding: 26px 30px;
+    margin: 32px 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.9;
+    color: #1a1a1a;
+    white-space: pre;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* ── Callout ── */
+  .callout {
+    background-color: #F2EEE8;
+    border-left: 4px solid #C9A882;
+    padding: 16px 22px;
+    margin: 24px 0;
+    border-radius: 0 5px 5px 0;
+    color: #292929;
+  }
+
+  /* ── Summary box ── */
+  .summary-box {
+    background-color: #EDE8DF;
+    border-left: 4px solid #7B5540;
+    padding: 18px 24px;
+    margin: 28px 0;
+    border-radius: 0 5px 5px 0;
+    color: #292929;
+  }
+
+  /* ── Shared conclusion ── */
+  .shared-box {
+    background-color: #F2EEE8;
+    border: 2px solid #7B5540;
+    border-radius: 6px;
+    padding: 28px 30px;
+    margin: 38px 0;
+    color: #292929;
+  }
+  .shared-box h3 {
+    color: #7B5540;
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
+
+  /* ── Tables ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 30px 0;
+    font-size: 15.5px;
+  }
+  th {
+    background-color: #7B5540;
+    color: #FAF8F5;
+    padding: 13px 16px;
+    text-align: left;
+    font-family: 'Cambria Math', 'Cambria', Georgia, serif;
+  }
+  td {
+    border: 1px solid #C9A882;
+    padding: 12px 16px;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background-color: #F2EEE8; }
+
+  hr.divider {
+    border: none;
+    border-top: 1px solid #C9A882;
+    margin: 60px 0;
+  }
+
+  /* ── Keywords ── */
+  .keyword-box {
+    border: 1px solid #C9A882;
+    border-radius: 6px;
+    padding: 34px;
+    margin: 48px 0;
+    background-color: #F2EEE8;
+  }
+  .kw-item {
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #C9A882;
+  }
+  .kw-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .kw-title {
+    font-weight: 700;
+    color: #7B5540;
+    font-size: 1.1em;
+    margin-bottom: 8px;
+  }
+
+  strong { color: #111; font-weight: 700; }
+  em { color: #7B5540; font-weight: 600; }
+
+  @media (max-width: 700px) {
+    body { padding: 32px 18px; font-size: 17px; }
+    h1 { font-size: 1.9em; }
+    h2 { font-size: 1.35em; }
+    .flowchart { font-size: 12px; padding: 18px 16px; }
+    .diagram-box pre { font-size: 11.5px; }
+  }
+</style>
+</head>
+<body>
+
+<button class="back-btn" onclick="history.back()">← Back</button>
+
+<h1>Group Theory: Why Physicists Worship Symmetry</h1>
+<div class="subtitle">Two problems, each solved two ways</div>
+
+
+<!-- ============================================================
+     INTRODUCTION
+     ============================================================ -->
+
+<h2>The Detective's Insight</h2>
+
+<p>Imagine you are a detective called to a mansion after a robbery. The floor plan is perfectly symmetric — the east wing is a mirror of the west wing. A witness tells you the thief went into the east wing. Do you search both wings?</p>
+
+<p>Of course not. The symmetry cuts your work in half. You eliminated redundant territory without losing any information about the crime.</p>
+
+<p>Physics works by the same logic. Most systems in nature carry hidden symmetries. A hydrogen atom looks identical after any rotation. A crystal lattice repeats every few atoms. Two identical masses on identical springs behave the same whether you label them left-to-right or right-to-left. Recognizing these symmetries lets you throw away computation before you start. That is what group theory formalizes: a systematic way of finding what is redundant and discarding it.</p>
+
+<blockquote>Symmetry removes redundant information. Group theory is the machinery that identifies what is redundant and throws it away.</blockquote>
+
+
+<!-- ============================================================
+     FLOWCHART
+     ============================================================ -->
+
+<h2>How Physicists Actually Think About This</h2>
+
+<p>Before the worked examples, here is the reasoning pattern that symmetry makes possible:</p>
+
+<div class="flowchart">START: I have a physics problem
+   |
+   v
+Do I recognize any symmetries?
+   |
+   +-- NO  -->  Solve by brute force
+   |             (long, mechanical, gives numbers)
+   |
+   +-- YES -->  What does Noether's theorem say is conserved?
+                 |
+                 v
+              Can I use that conservation law
+              to reduce the problem?
+                 |
+                 +-- NO  -->  Solve as normal
+                 |
+                 +-- YES -->  Choose coordinates that respect
+                               the symmetry
+                                 |
+                                 v
+                               Equations decouple
+                                 |
+                                 v
+                               Solve the smaller problem
+                                 |
+                                 v
+                               END: same answer, far less work</div>
+
+<p>The detective doesn't search the whole mansion. The physicist doesn't solve the whole system. Both use structure to eliminate territory that doesn't need investigating.</p>
+
+
+<!-- ============================================================
+     TABLE 1
+     ============================================================ -->
+
+<h2>What Each Symmetry Buys You</h2>
+
+<table>
+  <tr>
+    <th>Symmetry</th>
+    <th>Conservation Law</th>
+    <th>What It Lets You Ignore</th>
+  </tr>
+  <tr>
+    <td><strong>Rotational</strong> — physics unchanged after spinning the system</td>
+    <td>Angular momentum <strong>L</strong></td>
+    <td>Two spatial dimensions — motion collapses to a plane</td>
+  </tr>
+  <tr>
+    <td><strong>Translational</strong> — physics unchanged after sliding the system</td>
+    <td>Linear momentum <strong>p</strong></td>
+    <td>Absolute position — only relative positions matter</td>
+  </tr>
+  <tr>
+    <td><strong>Left-right exchange</strong> — swapping identical parts leaves physics unchanged</td>
+    <td>Mode parity</td>
+    <td>Coupling between modes — the problem splits apart</td>
+  </tr>
+  <tr>
+    <td><strong>Reflection (parity)</strong> — mirror flip leaves physics unchanged</td>
+    <td>Parity quantum number</td>
+    <td>Half the Hilbert space — the matrix becomes block diagonal</td>
+  </tr>
+  <tr>
+    <td><strong>Time-reversal</strong> — physics looks the same running backward</td>
+    <td>Energy <strong>E</strong></td>
+    <td>Half the time evolution</td>
+  </tr>
+</table>
+
+<p>Each row is a permission slip. You are not losing information — you are recognizing that the information was never independent to begin with.</p>
+
+
+<!-- ============================================================
+     CLASSICAL EXAMPLE
+     ============================================================ -->
+
+<hr class="divider">
+
+<h2>Classical Mechanics: Two Masses on Springs</h2>
+
+<p>Two identical masses sit on a frictionless table. Mass one connects to a fixed left wall by a spring of stiffness $k$. Mass two connects to the right wall by an identical spring. The two masses are also connected to each other by a third spring of the same stiffness. The question: at what frequencies does this system naturally vibrate?</p>
+
+<div class="diagram-box">
+<pre>
+  Wall   k      k      k   Wall
+   |--/\/\--[M1]--/\/\--[M2]--/\/\--|
+
+               x1 -->   x2 -->
+
+  M1, M2 : identical masses m
+  All springs: stiffness k
+  x1, x2 : displacements from rest
+</pre>
+<div class="diagram-caption">Three identical springs connecting two identical masses to fixed walls.</div>
+</div>
+
+<h3>Brute Force: Writing the Equations</h3>
+
+<p>The force on mass one comes from the left wall spring and the middle spring. If $x_1 > x_2$, the middle spring is stretched and pulls mass one back toward mass two:</p>
+
+<div class="eq">
+$$m\ddot{x}_1 = -kx_1 - k(x_1 - x_2) = -2kx_1 + kx_2$$
+$$m\ddot{x}_2 = -kx_2 - k(x_2 - x_1) = -2kx_2 + kx_1$$
+</div>
+
+<p>Neither equation can be solved without knowing the other. They are entangled. The standard technique is to assume both masses oscillate at the same frequency $\omega$: guess $x_1 = A_1 e^{i\omega t}$ and $x_2 = A_2 e^{i\omega t}$. Since $\frac{d^2}{dt^2}e^{i\omega t} = -\omega^2 e^{i\omega t}$, each differential equation becomes algebraic. Substituting and dividing by $e^{i\omega t}$:</p>
+
+<div class="eq">
+$$(2k - m\omega^2)A_1 - kA_2 = 0$$
+$$-kA_1 + (2k - m\omega^2)A_2 = 0$$
+</div>
+
+<p>In matrix form:</p>
+
+<div class="eq">
+$$\begin{pmatrix} 2k - m\omega^2 & -k \\ -k & 2k - m\omega^2 \end{pmatrix} \begin{pmatrix} A_1 \\ A_2 \end{pmatrix} = \begin{pmatrix} 0 \\ 0 \end{pmatrix}$$
+</div>
+
+<div class="callout">For a non-trivial solution, the determinant must be zero. That condition gives the natural frequencies.</div>
+
+<p>Computing the determinant and expanding:</p>
+
+<div class="eq">
+$$(2k - m\omega^2)^2 - k^2 = 0$$
+$$4k^2 - 4km\omega^2 + m^2\omega^4 - k^2 = 0$$
+$$m^2\omega^4 - 4km\omega^2 + 3k^2 = 0$$
+</div>
+
+<p>Applying the quadratic formula with $u = \omega^2$:</p>
+
+<div class="eq">
+$$u = \frac{4km \pm \sqrt{16k^2m^2 - 12k^2m^2}}{2m^2} = \frac{4km \pm 2km}{2m^2}$$
+</div>
+
+<p>Two frequencies emerge:</p>
+
+<div class="eq">
+$$\omega_1 = \sqrt{\frac{k}{m}} \qquad \omega_2 = \sqrt{\frac{3k}{m}}$$
+</div>
+
+<p>Back-substituting to find the mode shapes: for $\omega_1$, we get $A_1 = A_2$ — both masses move together. For $\omega_2$, we get $A_1 = -A_2$ — the masses move in opposite directions.</p>
+
+<div class="summary-box">
+  <strong>What brute force cost:</strong> Newton's laws → exponential guess → matrix → determinant → polynomial expansion → quadratic formula → back-substitution. Eight algebraic steps. For three masses this demands a $3 \times 3$ determinant. For ten masses, a $10 \times 10$ one. The method scales badly and gives numbers without explaining why those numbers have the values they do.
+</div>
+
+<h3>Symmetry: The Short Path</h3>
+
+<p>Look at the physical setup. Swapping mass one and mass two leaves every spring force unchanged. The physics is identical before and after the swap. That is a symmetry, and it tells us something: there exist coordinates in which the problem falls apart into independent pieces.</p>
+
+<p>Define the center of mass position and the relative displacement:</p>
+
+<div class="eq">
+$$X = \frac{x_1 + x_2}{2} \qquad x = x_1 - x_2$$
+</div>
+
+<p>$X$ does not change under the swap. $x$ changes sign. These are the natural coordinates. Add the two equations of motion:</p>
+
+<div class="eq">
+$$m\ddot{X} + kX = 0 \qquad \Rightarrow \qquad \omega_1 = \sqrt{\frac{k}{m}}$$
+</div>
+
+<p>Subtract the second from the first:</p>
+
+<div class="eq">
+$$m\ddot{x} + 3kx = 0 \qquad \Rightarrow \qquad \omega_2 = \sqrt{\frac{3k}{m}}$$
+</div>
+
+<p>Same two frequencies. Two additions instead of eight steps. And the physical reason is now visible: $\omega_1$ governs center-of-mass motion where the middle spring does nothing (effective stiffness $k$), while $\omega_2$ governs relative motion where the middle spring is fully engaged (effective stiffness $k + 2k = 3k$).</p>
+
+<div class="shared-box">
+  <h3>General Solution — Common to Both Methods</h3>
+  <p>Both paths reach the same two frequencies and the same two mode shapes. The general motion is their superposition:</p>
+  <div class="eq">
+$$\begin{pmatrix} x_1(t) \\ x_2(t) \end{pmatrix}
+= C_1 \begin{pmatrix} 1 \\ 1 \end{pmatrix} \cos\!\left(\omega_1 t + \phi_1\right)
++ C_2 \begin{pmatrix} 1 \\ -1 \end{pmatrix} \cos\!\left(\omega_2 t + \phi_2\right)$$
+  </div>
+  <p>The four constants $C_1, C_2, \phi_1, \phi_2$ are fixed by initial conditions. Group theory shortens the path to the frequencies. The assembly of the general solution from those frequencies is the same either way.</p>
+</div>
+
+
+<!-- ============================================================
+     QUANTUM EXAMPLE — PARTICLE ON A RING
+     ============================================================ -->
+
+<hr class="divider">
+
+<h2>Quantum Mechanics: A Particle on a Ring</h2>
+
+<p>Imagine a particle confined to move along a circular track. It cannot escape — it goes around and around. Gravity is absent (horizontal ring), the surface is frictionless. We want to know what energy levels are available to this particle.</p>
+
+<p>This is real physics. Electrons in benzene molecules move on essentially circular paths. The quantization we are about to find explains why benzene's electrons have the energy spectrum they do.</p>
+
+<div class="diagram-box">
+<pre>
+              *   *   *
+          *               *
+        *                   *
+       *         Ring        *
+        *       (radius r)  *
+          *               *
+              *   *   *
+
+  Position described by angle theta (0 to 2*pi)
+  Particle travels: theta --> theta + delta_theta
+
+  Boundary condition: after one full loop,
+  the wavefunction must return to its starting value.
+  psi(theta + 2*pi) = psi(theta)
+</pre>
+<div class="diagram-caption">A particle confined to a circular ring of radius r. The only coordinate is the angle θ.</div>
+</div>
+
+<h3>Brute Force: Solving the Schrödinger Equation</h3>
+
+<p>The particle's position along the ring is described by the angle $\theta$, running from $0$ to $2\pi$. Its quantum state is a wavefunction $\psi(\theta)$. The kinetic energy of rotation is $L^2/2I$ where the moment of inertia is $I = mr^2$. Written as a differential equation for $\psi(\theta)$, this gives the Schrödinger equation:</p>
+
+<div class="eq">
+$$-\frac{\hbar^2}{2mr^2}\frac{d^2\psi}{d\theta^2} = E\psi$$
+</div>
+
+<p>The $r^2$ in the denominator comes from the moment of inertia — a particle farther from the center is harder to spin. The general solution is a combination of complex exponentials:</p>
+
+<div class="eq">
+$$\psi(\theta) = A e^{ik\theta} + B e^{-ik\theta}$$
+</div>
+
+<p>where $k$ is a number we have to determine. Substituting back, the energy is:</p>
+
+<div class="eq">
+$$E = \frac{\hbar^2 k^2}{2mr^2}$$
+</div>
+
+<p>Now apply the boundary condition. The particle is on a ring: going all the way around must bring the wavefunction back to exactly its starting value. Mathematically, $\psi(\theta + 2\pi) = \psi(\theta)$. Substituting:</p>
+
+<div class="eq">
+$$A e^{ik\theta} e^{i2\pi k} + B e^{-ik\theta} e^{-i2\pi k} = A e^{ik\theta} + B e^{-ik\theta}$$
+</div>
+
+<p>For this to hold at every angle $\theta$, we need both $e^{i2\pi k} = 1$ and $e^{-i2\pi k} = 1$. That condition is satisfied only when $k$ is an integer. So $k = n$ where $n = 0, \pm 1, \pm 2, \ldots$ The energy levels are:</p>
+
+<div class="eq">
+$$E_n = \frac{\hbar^2 n^2}{2mr^2}$$
+</div>
+
+<p>The wavefunctions are $\psi_n(\theta) = e^{in\theta}$. Only certain energies exist: the spectrum is discrete and quantized.</p>
+
+<div class="summary-box">
+  <strong>What this cost:</strong> Write the Schrödinger equation → solve the differential equation → apply the boundary condition → extract the quantization condition. Four steps, and the quantization feels like a mathematical accident — an integer fell out because of a constraint we imposed by hand.
+</div>
+
+<h3>Symmetry: The Short Path</h3>
+
+<p>Look at the ring. Rotating the entire ring by any angle $\Delta\theta$ leaves it completely unchanged — every point on the ring maps to another point on the same ring. The Schrödinger equation respects this: it contains no preferred direction, no special angle. The physics is fully rotationally symmetric.</p>
+
+<p>Noether's theorem then says immediately: rotational symmetry produces a conserved quantity. In quantum mechanics, that conserved quantity is angular momentum. The particle's angular momentum is quantized in units of $\hbar$:</p>
+
+<div class="eq">
+$$L = n\hbar \qquad n = 0, \pm 1, \pm 2, \ldots$$
+</div>
+
+<p>We know $n$ must be an integer before solving any equation. That is what the symmetry tells us. From the angular momentum, the energy follows directly — kinetic energy on a ring of radius $r$ is $p^2/2m$ where $p = L/r = n\hbar/r$:</p>
+
+<div class="eq">
+$$E_n = \frac{p^2}{2m} = \frac{n^2\hbar^2}{2mr^2}$$
+</div>
+
+<p>Same quantized energy levels. No differential equation required. The symmetry handed us the answer before the calculation started.</p>
+
+<p>And the physical reason is now transparent: the quantization is not a mathematical accident of applying boundary conditions. It is a direct consequence of the ring's rotational symmetry. The symmetry forces angular momentum to be conserved. Conservation of angular momentum forces it to take discrete values. Discrete angular momentum means discrete energy. The whole chain is logical, not computational.</p>
+
+<table>
+  <tr>
+    <th>Approach</th>
+    <th>Key Move</th>
+    <th>Why Quantization Happens</th>
+    <th>Steps</th>
+  </tr>
+  <tr>
+    <td><strong>Brute force</strong></td>
+    <td>Solve the Schrödinger equation, apply boundary condition</td>
+    <td>A mathematical constraint forces $k$ to be an integer</td>
+    <td>Four algebraic steps</td>
+  </tr>
+  <tr>
+    <td><strong>Symmetry</strong></td>
+    <td>Recognize rotational symmetry, invoke Noether</td>
+    <td>Rotational symmetry forces angular momentum to be conserved and quantized</td>
+    <td>One observation</td>
+  </tr>
+</table>
+
+
+<!-- ============================================================
+     WHAT GROUP THEORY IS
+     ============================================================ -->
+
+<h2>What Group Theory Actually Is</h2>
+
+<p>After working through both examples, here is what group theory is — stated plainly.</p>
+
+<p>In the coupled oscillator problem, the relevant symmetry was left-right exchange. That symmetry told us which coordinates to use ($X$ and $x$), and in those coordinates the coupled equations separated into independent ones.</p>
+
+<p>In the particle-on-a-ring problem, the relevant symmetry was continuous rotation. That symmetry told us angular momentum is conserved. Conservation of angular momentum told us $n$ must be an integer. The integer condition gave us the energy levels.</p>
+
+<p>In both cases the pattern was identical: find the symmetry, apply Noether, use the conserved quantity to eliminate variables or read off the answer. Group theory is the mathematical language that makes this pattern precise and systematic. A "group" in the technical sense is a set of transformations that can be combined and reversed. The rotation group on the ring is called SO(2). The symmetry group of the two-mass system is the two-element exchange group. Each group has a characteristic list of conserved quantities, and group theory tells you what they are without having to discover them by accident.</p>
+
+
+<!-- ============================================================
+     TABLE: QUANTUM COMPRESSION
+     ============================================================ -->
+
+<h2>How Symmetry Compresses Quantum Problems</h2>
+
+<table>
+  <tr>
+    <th>Symmetry</th>
+    <th>Group</th>
+    <th>Conserved Quantity</th>
+    <th>Computational Win</th>
+  </tr>
+  <tr>
+    <td><strong>Rotation on a ring</strong></td>
+    <td>SO(2)</td>
+    <td>Angular momentum — integer $n$</td>
+    <td>Energy levels read off directly; no differential equation</td>
+  </tr>
+  <tr>
+    <td><strong>Full rotational symmetry</strong></td>
+    <td>SO(3)</td>
+    <td>Angular momentum $\ell$, magnetic quantum number $m$</td>
+    <td>Atomic states labeled by $(\ell, m)$ — periodic table structure</td>
+  </tr>
+  <tr>
+    <td><strong>Reflection (parity)</strong></td>
+    <td>$\mathbb{Z}_2$</td>
+    <td>Parity — even or odd</td>
+    <td>Hamiltonian matrix splits into two independent blocks</td>
+  </tr>
+  <tr>
+    <td><strong>Translation in a crystal</strong></td>
+    <td>Discrete translation group</td>
+    <td>Crystal momentum $k$</td>
+    <td>$10^{23}$-atom problem reduces to a single unit cell</td>
+  </tr>
+</table>
+
+
+<!-- ============================================================
+     TRANSLATION: LOW TO HIGH
+     ============================================================ -->
+
+<h2>From Hooke's Law to Quantum Fields</h2>
+
+<p>Here is how the ideas in this chapter connect to simpler physics below and more complicated physics above.</p>
+
+<p>You already know that a single mass on a spring oscillates at $\omega = \sqrt{k/m}$. Stiffness competes with inertia, and that competition sets the oscillation rate. That is the simplest vibrating system.</p>
+
+<p>Couple two such systems. The coupling mixes them together and the clean single-oscillator picture seems to collapse. But the symmetry approach reveals that coupling doesn't destroy the simple oscillator picture — it just mixes two simple oscillators into each other. The symmetry unmixes them. Each normal mode turns out to be a simple oscillator with its own effective stiffness. The coupled system was always two independent oscillators in disguise; the symmetry shows you where the disguise ends.</p>
+
+<p>Move up to the quantum level and the ring particle shows the same principle in a different language. Instead of coupled springs, you have a wavefunction constrained to a circle. Instead of left-right symmetry, you have rotational symmetry. Instead of mode decomposition, you have angular momentum quantization. But the logic is structurally identical: find the symmetry, let Noether tell you what is conserved, read off the structure of the solution.</p>
+
+<p>This pattern continues upward. Waves are oscillators coupled continuously across space; their normal modes are Fourier components. Phonons in a crystal are normal modes of $10^{23}$ coupled atomic oscillators; translational symmetry makes this tractable by reducing the problem to a single unit cell. Quantum fields are oscillators at every point in spacetime; their excitations are particles. At every level, symmetry is what keeps the physics computable.</p>
+
+
+<!-- ============================================================
+     KEY CONCEPTS
+     ============================================================ -->
+
+<h2>Key Concepts</h2>
+
+<div class="keyword-box">
+
+  <div class="kw-item">
+    <div class="kw-title">Normal Mode</div>
+    <div>A collective pattern of motion in which every part of the system oscillates at the same frequency with a fixed amplitude ratio. In the two-mass problem there are two: the symmetric mode where both masses move together at $\omega_1$, and the antisymmetric mode where they move in opposite directions at $\omega_2$. Any general motion is a superposition of normal modes, and normal modes do not mix with each other over time.</div>
+  </div>
+
+  <div class="kw-item">
+    <div class="kw-title">Quantization</div>
+    <div>The restriction of a physical quantity to a discrete set of allowed values. In the particle-on-a-ring problem, the energy can only take values $E_n = \hbar^2 n^2 / 2m$ where $n$ is an integer. The brute force approach discovers this as a mathematical consequence of the boundary condition. The symmetry approach explains it as a physical consequence of the ring's rotational symmetry: the symmetry forces angular momentum to be conserved, and conserved angular momentum on a closed path can only take integer multiples of $\hbar$.</div>
+  </div>
+
+  <div class="kw-item">
+    <div class="kw-title">Noether's Theorem</div>
+    <div>The theorem connecting every continuous symmetry of a physical system to a conserved quantity. Rotational symmetry gives conservation of angular momentum. Translational symmetry gives conservation of linear momentum. Time symmetry gives conservation of energy. It is a direct, reliable pipeline from "this transformation leaves the physics unchanged" to "this quantity never changes over time." It is not a philosophical observation — it is a computational tool.</div>
+  </div>
+
+  <div class="kw-item">
+    <div class="kw-title">Symmetry</div>
+    <div>A transformation that leaves the physics of a system unchanged. Swapping the two masses is a symmetry because they are identical and connected identically. Rotating the ring is a symmetry because the ring looks the same at every angle. Every symmetry is a promise that the system has hidden structure — and that structure, once identified, reduces the computational problem.</div>
+  </div>
+
+  <div class="kw-item">
+    <div class="kw-title">Group Theory</div>
+    <div>The mathematical language for classifying symmetries and extracting their consequences systematically. A group is a set of transformations that can be combined and reversed — the rotations of the ring form a group called SO(2), and the exchange symmetry of the two masses forms the two-element group $\mathbb{Z}_2$. In physics, group theory tells you which coordinates to use, which quantities are conserved, which transitions are forbidden, and how to decompose a complicated system into independent pieces. It turns an intuition about symmetry into a reliable procedure.</div>
+  </div>
+
+</div>
+
+</body>
+</html>
